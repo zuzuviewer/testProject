@@ -15,5 +15,4 @@ func Route(frame *faygo.Framework) {
 		frame.NewNamedAPI("test struct handler", "POST", "/test", &handler.Test{}).Use(middleware.Token),
 		frame.NewNamedAPI("Save result", "POST", "/save/scanner/result", handler.SaveResult),
 	)
-	fmt.Printf("add route success %v\n", &handler.Test{})
 }

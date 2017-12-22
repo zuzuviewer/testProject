@@ -3,19 +3,21 @@ package mongo
 import (
 	//"ecologyServer/handler"
 	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
+	"fmt"
 )
 
-type oneAlgae struct {
-	algaeName    int32
-	algaeCount   int32
-	algaeDensity float64
+type OneAlgae struct {
+	AlgaeName    int32 `json:"algae_name"`
+	AlgaeCount   int32 `json:"algae_count"`
+	AlgaeDensity float64 `json:"algae_density"`
 }
 
 type Result struct {
 	DeviceId              string     `json:"device_id"`
 	UserId                int32      `json:"user_id"`
 	ExperimentName        string     `json:"experiment_name"`
-	Algaes                []oneAlgae `json:"algaes,omitempty"`
+	Algaes                []OneAlgae `json:"algaes,omitempty"`
 	TotalAlgaeDensity     float64    `json:"total_algae_density"`
 	TotalAlgaeCount       int32      `json:"total_algae_count"`
 	AdvantageAlgaeName    int32      `json:"advantage_algae_name"`
@@ -47,6 +49,13 @@ func Init() error {
 
 func SaveExperimentResult(result Result) error {
 	db := session.DB("ecology").C("scanner_result")
-	err := db.Insert(&result)
+	count,err := db.Find(bson.M{"deviceid":result.DeviceId,"experimentdatetime":result.ExperimentDateTime}).Count()
+	if(err != nil){
+		fmt.Printf("query scanner_result mongodb collection failed")
+		return err
+	}
+	if(count == 0){
+		err = db.Insert(&result)
+	}
 	return err
 }

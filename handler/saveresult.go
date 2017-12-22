@@ -16,11 +16,17 @@ var SaveResult = faygo.HandlerFunc(func(ctx *faygo.Context) error {
 		fmt.Printf("read body err,%v\n", err)
 		return ctx.JSON(412, faygo.Map{"error": err.Error()}, true)
 	}
-	println("json bosy:", string(body))
+	//println("json body:", string(body))
 	if err = json.Unmarshal(body, &r); err != nil {
 		fmt.Printf("unmarshal err,%v\n", err)
 		return ctx.JSON(412, faygo.Map{"error": err.Error()}, true)
 	}
+	//algaes := ctx.R.PostFormValue("algaes")
+	//fmt.Printf("algaes data: %v\n",algaes)
+	//if err = json.Unmarshal([]byte(algaes),&r.Algaes);err != nil{
+	//	fmt.Printf("unmarshal algaes err,%v\n",err)
+	//	return ctx.JSON(412, faygo.Map{"error": err.Error()}, true)
+	//}
 	if err = mongo.SaveExperimentResult(r); err != nil {
 		fmt.Printf("insert to mongo db err,%v\n", err)
 		return ctx.JSON(412, faygo.Map{"error": err.Error()}, true)
